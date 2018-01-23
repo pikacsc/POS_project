@@ -8,6 +8,7 @@ import java.sql.Statement;
 public class DAO {
 	Connection conn;
 	Statement stmt;
+	String table;
 	public DAO() {
 		ResultSet rs = null;
 		String url = null;
@@ -25,7 +26,16 @@ public class DAO {
 		
 	}
 	
-	void test() {
+	void insert() {
+		
+	}
+	void update() {
+			
+	}
+	void delete() {
+		
+	}
+	void select() {
 		
 	}
 

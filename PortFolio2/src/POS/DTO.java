@@ -1,7 +1,14 @@
 package POS;
 
+import java.sql.Connection;
+import java.sql.Statement;
+
 public class DTO {
 	
+	Connection conn;
+	Statement stmt;
+	
+	 
 	 private String goodsName;
 	 private int goodsPrice;
 	 private int goodsCount;
@@ -29,7 +36,8 @@ public class DTO {
 	 private String oGoodsFinalPrice;
 	 
 	 
-	public DTO() {
-		
+	public DTO(Connection conn,Statement stmt) {
+		this.conn = conn;
+		this.stmt = stmt;
 	} 
 }
