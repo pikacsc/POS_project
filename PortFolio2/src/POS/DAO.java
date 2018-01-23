@@ -26,16 +26,29 @@ public class DAO {
 		
 	}
 	
-	void insert() {
-		
+	int insertGoods(String name,int price,int count,String code) {
+		String sql = "insert into pos_goods values('"
+					+name+"', '"
+					+price+"', '"
+					+count+"', '"
+					+code+"');";
+		try {
+			stmt.executeUpdate(sql);
+			System.out.println("입력되었습니다.");
+			return 1;
+		}catch(Exception e){
+			e.printStackTrace();
+			e.getMessage();
+			return 0;
+		}
 	}
-	void update() {
+	void updateGoods() {
 			
 	}
-	void delete() {
+	void deleteGoods() {
 		
 	}
-	void select() {
+	void selectGoods() {
 		
 	}
 

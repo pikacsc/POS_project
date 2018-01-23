@@ -15,6 +15,7 @@ public class DTO {
 	 private String goodsCode;
 	 
 	 private String employeeId;
+	 private String employeepw;
 	 private String employeeName;
 	 private String employeeLevel;
 	 private String joinDate;
@@ -30,9 +31,9 @@ public class DTO {
 	 private int yearlyPurchase;
 	 
 	 
-	 private String oGoodsName;
-	 private String oGoodsPrice;
-	 private String oGoodsCount;
+	 private String orderPrice;
+	 private String orderCount;
+	 private String ogoodsCode; 
 	 private String oGoodsFinalPrice;
 	 
 	 
