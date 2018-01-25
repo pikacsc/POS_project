@@ -43,11 +43,17 @@ public class DAO {
 			return e.getMessage();
 		}
 	}
-	void updateGoods() {
-			
-	}
-	void deleteGoods() {
-		
+	
+	String deleteGoods(String code) {
+		String sql = "delete from pos_goods where gcode = '"+code+"'";
+		try {
+			stmt.executeUpdate(sql);
+			return "삭제되었습니다.";
+		}catch(Exception e) {
+			System.out.println(sql);
+			e.printStackTrace();
+			return e.getMessage();
+		}
 	}
 	DefaultTableModel selectGoods(DefaultTableModel model) {
 		String sql = "select * from pos_goods";
@@ -100,6 +106,35 @@ public class DAO {
 	}
 	
 	
+	
+	
+	String login(String id, String pw) {
+		String sql ="select e_id as id , e_pw as pw , e_name as name , e_level as lv"
+				+ " from pos_employees "
+				+ " where e_id = '"+id+"'";
+		String dbpw;
+		String name;
+		String lv;
+		try {
+			String result;
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				dbpw = rs.getString("pw");
+				if(pw.equals(dbpw)) {
+					lv = rs.getString("lv");
+					name = rs.getString("name");
+					result = "로그인승인! "+lv+" "+name+"님 어서오세요!";
+				}else {
+					result = "비번이 안맞습니다.";
+				}
+			}
+			return result;
+		}catch(Exception e) {
+			e.printStackTrace();
+			e.getMessage();
+			return "없는 아이디 입니다.";
+		}
+	}
 	
 	
 	

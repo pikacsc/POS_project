@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -30,6 +31,8 @@ public class POS_main extends JFrame {
 
 	DefaultTableModel model;
 	JTable table;
+	loginDialog login = new loginDialog(this,"로그인");
+	
 	
 	public POS_main() {
 		setTitle("포스"+version);
@@ -54,8 +57,10 @@ public class POS_main extends JFrame {
 				dao.closeAll();
 			}
 		});
-		setSize(700, 500);
+		setSize(800, 500);
 		setVisible(true);
+		login.setVisible(true);
+		
 	}
 	
 	
@@ -98,7 +103,7 @@ public class POS_main extends JFrame {
 			
 			model = new DefaultTableModel(colName, 0);
 			table = new JTable(model);
-			table.setPreferredScrollableViewportSize(new Dimension(400, 300));
+			table.setPreferredScrollableViewportSize(new Dimension(500, 300));
 			
 			table.addMouseListener(new MouseAdapter() {
 				
@@ -163,10 +168,10 @@ public class POS_main extends JFrame {
 							String result = dao.insertGoods(name, price, count, code);
 							if(result.equals("입력되었습니다.")) {
 								JOptionPane.showMessageDialog(null,"입력되었습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
-							}else if(result.substring(0,8).equals("ORA-00001")){
+								dao.selectGoods(model);
+							}else if(result.substring(0,9).equals("ORA-00001")){
 								JOptionPane.showMessageDialog(null, "입력실패, 바코드가 중복됩니다", "Error", JOptionPane.ERROR_MESSAGE);
 							}else {
-								System.out.println(result);
 								JOptionPane.showMessageDialog(null, "입력실패"+result, "Error", JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -206,6 +211,33 @@ public class POS_main extends JFrame {
 				}
 			});
 			
+			
+			deleteBtn = new JButton("삭제");
+			deleteBtn.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//Yes 버튼을 눌렀을때
+					if(JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "삭제", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION) {
+						try {
+							String code = gCode.getText();
+							String result = dao.deleteGoods(code);
+							if(result.equals("삭제되었습니다.")) {
+								JOptionPane.showMessageDialog(null, "삭제 되었습니다.", "알림",JOptionPane.INFORMATION_MESSAGE);
+								dao.selectGoods(model);
+							}else {
+								JOptionPane.showMessageDialog(null, "삭제 실패"+result, "Error", JOptionPane.ERROR_MESSAGE);
+							}
+						}catch(Exception a) {
+							JOptionPane.showMessageDialog(null, "숫자만 입력하세요", "Error", JOptionPane.ERROR_MESSAGE);	
+							return;
+						}
+					} else {
+						return;
+					}
+				}
+			});
+			
 			layoutSetting();
 			add(north,BorderLayout.NORTH);
 			add(center,BorderLayout.CENTER);
@@ -232,6 +264,7 @@ public class POS_main extends JFrame {
 			south.add(selectBtn);
 			south.add(insertBtn);
 			south.add(updateBtn);
+			south.add(deleteBtn);
 			
 			
 		}
@@ -240,8 +273,62 @@ public class POS_main extends JFrame {
 	}
 	
 	
+	class pos_employeePanel extends JPanel{
+		
+	}
+	
+	class loginDialog extends JDialog{
+		JLabel idLabel = new JLabel("ID");
+		JLabel pwLabel = new JLabel("pw");
+		JTextField id = new JTextField(10);
+		JTextField pw = new JTextField(10);
+		JButton loginBtn = new JButton("로그인");
+		
+		public loginDialog(JFrame frame,String title) {
+			super(frame,title,true);
+			setLayout(new BorderLayout());
+			JPanel centerPanel = new JPanel();
+			JPanel southPanel = new JPanel();
+			centerPanel.setLayout(new FlowLayout());
+			centerPanel.add(idLabel);
+			centerPanel.add(id);
+			centerPanel.add(pwLabel);
+			centerPanel.add(pw);
+			southPanel.setLayout(new FlowLayout());
+			southPanel.add(loginBtn);
+			loginBtn.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String result = dao.login(id.getText(), pw.getText());
+					if(result.substring(0, 4).equals("로그인승인")) {
+						JOptionPane.showMessageDialog(null, result, "로그인승인", JOptionPane.INFORMATION_MESSAGE);
+						setVisible(false);
+					}else {
+						JOptionPane.showMessageDialog(null, result, "로그인 실패", JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+				}
+			});
+			add(centerPanel,BorderLayout.CENTER);
+			add(southPanel,BorderLayout.SOUTH);
+			setSize(350, 350);
+			
+			addWindowListener(new WindowAdapter() {
+				
+				@Override
+				public void windowClosing(WindowEvent e) {
+					dao.closeAll();
+					System.exit(0);
+				}
+			});
+			
+			
+		}
+	}
 	
 	public static void main(String[] args) {
 		new POS_main();
+
 	}
 }
