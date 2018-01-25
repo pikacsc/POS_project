@@ -9,6 +9,7 @@ public class DTO {
 	Statement stmt;
 	
 	 
+	
 	 private String goodsName;
 	 private int goodsPrice;
 	 private int goodsCount;

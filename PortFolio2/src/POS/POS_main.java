@@ -177,6 +177,7 @@ public class POS_main extends JFrame {
 				}
 			});
 			
+			
 			updateBtn = new JButton("¼öÁ¤");
 			updateBtn.addActionListener(new ActionListener() {
 				
