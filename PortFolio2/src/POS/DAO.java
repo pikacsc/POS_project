@@ -115,7 +115,7 @@ public class DAO {
 		String dbpw;
 		String name;
 		String lv;
-		try {
+		try {//여기서 엄청해맸음 
 			String result;
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {
@@ -123,11 +123,11 @@ public class DAO {
 				if(pw.equals(dbpw)) {
 					lv = rs.getString("lv");
 					name = rs.getString("name");
-					result = "로그인승인! "+lv+" "+name+"님 어서오세요!";
-				}else {
-					result = "비번이 안맞습니다.";
+					return "로그인승인! "+lv+" "+name+"님 어서오세요!";
 				}
+				break;
 			}
+			result = "비번이 안맞습니다.";
 			return result;
 		}catch(Exception e) {
 			e.printStackTrace();

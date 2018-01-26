@@ -301,7 +301,7 @@ public class POS_main extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String result = dao.login(id.getText(), pw.getText());
-					if(result.substring(0, 4).equals("로그인승인")) {
+					if(result.substring(0, 5).equals("로그인승인")) {
 						JOptionPane.showMessageDialog(null, result, "로그인승인", JOptionPane.INFORMATION_MESSAGE);
 						setVisible(false);
 					}else {
