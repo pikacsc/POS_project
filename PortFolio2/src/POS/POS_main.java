@@ -558,8 +558,8 @@ public class POS_main extends JFrame {
 				}
 			});
 			
-			//±¸ÇöÁß......
-			addKeyListener(new KeyAdapter() {
+
+			loginBtn.addKeyListener(new KeyAdapter() {
 				
 				@Override
 				public void keyPressed(KeyEvent e) {
