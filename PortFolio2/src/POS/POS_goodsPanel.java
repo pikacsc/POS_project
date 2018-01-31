@@ -40,7 +40,11 @@ class POS_goodsPanel extends JPanel {
 	public POS_goodsPanel(DAO dao) {
 		this.dao = dao;
 		String colName[] = { "품명", "가격", "재고", "바코드" };
-		model = new DefaultTableModel(colName, 0);
+		model = new DefaultTableModel(colName, 0){
+			public boolean isCellEditable(int row,int column) {
+				return false;
+			}
+		};
 		layoutSetting();
 		listenerSetting();
 		

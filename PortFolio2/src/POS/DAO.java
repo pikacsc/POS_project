@@ -125,8 +125,8 @@ public class DAO {
 	
 	
 	String updateGoods(String name,int price,int count,String code) {
-		String sql = "update pos_goods set gname = '"
-					+name+"', gPrice ='"
+		String sql = "update pos_goods set gname ='"
+					+name+"' , gPrice ='"
 					+price+"', gcount ='"
 					+count+"' where gcode ='"
 					+code+"'";
@@ -152,7 +152,7 @@ public class DAO {
 				+pw+"','아르바이트',default)";
 		try {
 			stmt.executeUpdate(sql);
-			return "직원 "+name+"이 등록 되었습니다.";
+			return "직원등록 되었습니다.";
 		}catch(Exception e){
 			e.printStackTrace();
 			return e.getMessage();
@@ -167,7 +167,7 @@ public class DAO {
 				+level+"',default)";
 		try {
 			stmt.executeUpdate(sql);
-			return level+" "+name+"이 등록 되었습니다.";
+			return "직원등록 되었습니다.";
 		}catch(Exception e){
 			e.printStackTrace();
 			return e.getMessage();
@@ -221,10 +221,10 @@ public class DAO {
 	
 	
 	String updateEmployee(String name,String pw,String id) {
-		String sql = "update pos_goods set e_name = '"
+		String sql = "update pos_employees set e_name = '"
 					+name+"', e_pw ='"
-					+pw+"' where id ='"
-					+id+"'";
+					+pw+"' where e_id ="
+					+id;
 		try {
 			stmt.executeUpdate(sql);
 			return "수정되었습니다.";
@@ -235,14 +235,15 @@ public class DAO {
 	}
 	
 	String m_updateEmployee(String name,String pw,String level,String id) {
-		String sql = "update pos_goods set e_name = '"
+		String sql = "update pos_employees set e_name = '"
 				+name+"', e_pw ='"
 				+pw+"',e_level ='"
-				+level+"' where id ='"
+				+level+"' where e_id = '"
 				+id+"'";
+		System.out.println(sql);
 		try {
 			stmt.executeUpdate(sql);
-			return level+" "+name+"으로 수정 되었습니다.";
+			return "수정되었습니다.";
 		}catch(Exception e){
 			e.printStackTrace();
 			return e.getMessage();

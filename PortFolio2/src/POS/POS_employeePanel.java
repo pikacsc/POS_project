@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,10 +45,14 @@ class POS_employeePanel extends JPanel {
 	JButton updateBtn;// 수정
 	JButton deleteBtn;// 삭제
 	JButton searchBtn;// 검색
-	JButton logoutBtn;// 로그아웃
+
+	
+	JComboBox<String> combobox1;
+	JComboBox<String> combobox2;
+	JComboBox<String> combobox3;
 	
 	
-	public POS_employeePanel(String userLevel,String userid,DAO dao) {
+	public POS_employeePanel(String userid,String userLevel,DAO dao) {
 		this.dao = dao;
 		this.userLevel = userLevel;
 		this.userid = userid;
@@ -56,7 +61,11 @@ class POS_employeePanel extends JPanel {
 		
 		
 		String colName[] = { "ID","이름","직급","입사일자" };
-		eModel = new DefaultTableModel(colName, 0);
+		eModel = new DefaultTableModel(colName, 0){
+			public boolean isCellEditable(int row,int column) {
+				return false;
+			}
+		};
 		layoutSetting();
 		listenerSetting();
 	}
@@ -127,9 +136,13 @@ class POS_employeePanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				eDialog2.idTf.setText(selectedId);
 				if(selectedId.equals(userid)) {
 					eDialog2.setVisible(true);
-				}else if(userid.equals("직원")) {
+				}else if(userLevel.equals("직원")) {
+					JOptionPane.showMessageDialog(null, "권한이 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}else if(userLevel.equals("점장") && selectedLevel.equals("사장")) {
 					JOptionPane.showMessageDialog(null, "권한이 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}else {
@@ -137,15 +150,7 @@ class POS_employeePanel extends JPanel {
 				}
 			}
 		});
-		
-		logoutBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-		});
-		
+	
 	}
 	
 	void deleteProcess() {
@@ -178,7 +183,8 @@ class POS_employeePanel extends JPanel {
 
 		center.setLayout(new FlowLayout());
 		east.setLayout(new FlowLayout());
-		eTable = new JTable(eModel);
+		eTable = new JTable(eModel); 
+			
 		eTable.setPreferredScrollableViewportSize(new Dimension(500, 300));
 
 		center.add(new JScrollPane(eTable));
@@ -190,10 +196,8 @@ class POS_employeePanel extends JPanel {
 			east.add(deleteBtn);
 		}
 		updateBtn = new JButton("직원 정보 수정");
-		logoutBtn = new JButton("로그아웃");
 		east.add(selectBtn);
 		east.add(updateBtn);
-		east.add(logoutBtn);
 		add(center, BorderLayout.CENTER);
 		add(east, BorderLayout.SOUTH);
 		setSize(280, 400);
@@ -222,12 +226,12 @@ class POS_employeePanel extends JPanel {
 			this.userLevel = userLevel;
 			
 			setTitle(title);
-			layoutSetting();
+			layoutSetting(title);
 			listenerSetting();
 
 		}
 		
-		void layoutSetting() {
+		void layoutSetting(String title) {
 			setLayout(new BorderLayout());
 			
 			nameLabel = new JLabel("이름");
@@ -246,6 +250,11 @@ class POS_employeePanel extends JPanel {
 			
 			idTf = new JTextField(10);
 			idTf.setBounds(50, 40, 160, 25);
+			
+			if(title.equals("직원 정보 수정")) {
+				idTf.setText(selectedId);
+				idTf.setEditable(false);
+			}
 			
 			pwTf = new JPasswordField(10);
 			pwTf.setBounds(50, 70, 160, 25);
@@ -300,31 +309,61 @@ class POS_employeePanel extends JPanel {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if(eDialog.isVisible()) {
+					if(eDialog.isVisible()) { //직원 등록
+						emptyTFCheck(userLevel);
 						if(userLevel.equals("사장")) {
-							String name = nameTf.getText();
-							String id = idTf.getText();
-							String pw = new String(pwTf.getPassword());
-							String level = levelTf.getText();
-							dao.m_insertEmployee(name, id, pw, level);
+							String name = eDialog.nameTf.getText();
+							String id = eDialog.idTf.getText();
+							String pw = new String(eDialog.pwTf.getPassword());
+							String level = eDialog.levelTf.getText();
+							String result = dao.m_insertEmployee(name, id, pw, level);
+							if (result.equals("직원등록 되었습니다.")) {
+								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								dao.selectEmployee(eModel);
+							} else {
+								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}else {
-							String name = nameTf.getText();
-							String id = idTf.getText();
-							String pw = new String(pwTf.getPassword());
-							dao.insertEmployee(name, id, pw);
+							String name = eDialog.nameTf.getText();
+							String id = eDialog.idTf.getText();
+							String pw = new String(eDialog.pwTf.getPassword());
+							String result = dao.insertEmployee(name, id, pw);
+							if (result.equals("직원등록 되었습니다.")) {
+								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								dao.selectEmployee(eModel);
+							} else {
+								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
-					}else {
+					}else {//직원 정보 수정
+						emptyTFCheck(userLevel);
 						if(userLevel.equals("사장")) {
-							String name = nameTf.getText();
-							String id = idTf.getText();
-							String pw = new String(pwTf.getPassword());
-							String level = levelTf.getText();
-							dao.m_updateEmployee(name,pw,level,id);
+							String name = eDialog2.nameTf.getText();
+							String id = eDialog2.idTf.getText();
+							String pw = new String(eDialog2.pwTf.getPassword());
+							String level = eDialog2.levelTf.getText();
+							String result = dao.m_updateEmployee(name,pw,level,id);
+							if (result.equals("수정되었습니다.")) {
+								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								dao.selectEmployee(eModel);
+							} else {
+								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}else {
-							String name = nameTf.getText();
-							String id = idTf.getText();
-							String pw = new String(pwTf.getPassword());
-							dao.updateEmployee(name,pw,id);
+							String name = eDialog2.nameTf.getText();
+							String id = eDialog2.idTf.getText();
+							String pw = new String(eDialog2.pwTf.getPassword());
+							String result = dao.updateEmployee(name,pw,id);
+							if (result.equals("수정되었습니다.")) {
+								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								dao.selectEmployee(eModel);
+							} else {
+								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					}
 				}
@@ -359,6 +398,30 @@ class POS_employeePanel extends JPanel {
 			});
 			
 		
+		}
+		
+		
+		void emptyTFCheck(String userLevel) {
+			if(userLevel.equals("사장")) {
+				if (nameTf.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "이름을 입력하세요");
+					nameTf.requestFocus(); // 필드로 커서가 가짐
+				} else if (new String(pwTf.getPassword()).equals("")) {
+					JOptionPane.showMessageDialog(null, "비밀번호를 입력하세요");
+					pwTf.requestFocus(); // 필드로 커서가 가짐
+				} else if (levelTf.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "직급를 입력하세요");
+					levelTf.requestFocus(); // 필드로 커서가 가짐
+				} 
+			}else {
+				if (nameTf.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "이름을 입력하세요");
+					nameTf.requestFocus(); // 필드로 커서가 가짐
+				} else if (new String(pwTf.getPassword()).equals("")) {
+					JOptionPane.showMessageDialog(null, "비밀번호를 입력하세요");
+					pwTf.requestFocus(); // 필드로 커서가 가짐
+				} 
+			}
 		}
 		
 		

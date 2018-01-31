@@ -1,14 +1,11 @@
 package POS;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -16,14 +13,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 public class POS_main extends JFrame {
 	DAO dao;
@@ -42,6 +39,7 @@ public class POS_main extends JFrame {
 
 
 	loginDialog login = new loginDialog(this, "로그인");
+	POS_employeePanel ePanel;
 	
 	public POS_main() {
 
@@ -53,6 +51,26 @@ public class POS_main extends JFrame {
 
 		add(pane);
 
+		
+		JMenuBar bar = new JMenuBar();
+		JMenu systemMenu = new JMenu("시스템");
+		bar.add(systemMenu);
+		JMenuItem logoutMenu = new JMenuItem("로그아웃");
+		systemMenu.add(logoutMenu);
+		setJMenuBar(bar);
+		
+		logoutMenu.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pane.remove(ePanel);
+				login.setVisible(true);
+				ePanel = new POS_employeePanel(userid,userLevel,dao);
+				pane.addTab("직원관리", ePanel);
+			}
+		});
+		
+		
 		addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -63,7 +81,8 @@ public class POS_main extends JFrame {
 		setSize(800, 500);
 		setVisible(true);
 		login.setVisible(true);
-		pane.addTab("직원관리", new POS_employeePanel(userid,userLevel,dao));
+		ePanel = new POS_employeePanel(userid,userLevel,dao);
+		pane.addTab("직원관리",ePanel );
 		
 	}
 
@@ -173,6 +192,8 @@ public class POS_main extends JFrame {
 				JOptionPane.showMessageDialog(null, result, "로그인 실패", JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
+			id.setText("");
+			pw.setText("");
 		}
 
 		
