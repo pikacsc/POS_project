@@ -29,6 +29,8 @@ class POS_employeePanel extends JPanel {
 	String selectedId;
 	DAO dao;
 	employeeDialog eDialog;
+	employeeDialog eDialog2;
+	
 	
 	DefaultTableModel eModel;
 	JTable eTable;
@@ -50,6 +52,8 @@ class POS_employeePanel extends JPanel {
 		this.userLevel = userLevel;
 		this.userid = userid;
 		eDialog = new employeeDialog("직원등록",userLevel);
+		eDialog2 = new employeeDialog("직원 정보 수정",userLevel);
+		
 		
 		String colName[] = { "ID","이름","직급","입사일자" };
 		eModel = new DefaultTableModel(colName, 0);
@@ -103,13 +107,16 @@ class POS_employeePanel extends JPanel {
 					else if (userLevel.equals("사장")) {
 						deleteProcess();
 					}
-					else {
-						if(selectedLevel.equals("사장")||selectedLevel.equals("점장")) {
+					else if (userLevel.equals("점장")) {
+						if(selectedLevel.equals("직원")) {
+							deleteProcess();
+						}else {
 							JOptionPane.showMessageDialog(null, "권한이 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
 							return;
-						}else {
-							deleteProcess();
 						}
+					}else {
+						JOptionPane.showMessageDialog(null, "권한이 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
 					}
 				
 				}
@@ -121,12 +128,12 @@ class POS_employeePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(selectedId.equals(userid)) {
-					eDialog.setVisible(true);
+					eDialog2.setVisible(true);
 				}else if(userid.equals("직원")) {
 					JOptionPane.showMessageDialog(null, "권한이 없습니다.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}else {
-					eDialog.setVisible(true);
+					eDialog2.setVisible(true);
 				}
 			}
 		});
@@ -285,7 +292,7 @@ class POS_employeePanel extends JPanel {
 			
 			add(centerPanel, BorderLayout.CENTER);
 			add(southPanel, BorderLayout.SOUTH);
-			setSize(250, 450);
+			setSize(250, 350);
 		}
 		
 		void listenerSetting() {
@@ -293,17 +300,32 @@ class POS_employeePanel extends JPanel {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if(userLevel.equals("사장")) {
-						String name = nameTf.getText();
-						String id = idTf.getText();
-						String pw = new String(pwTf.getPassword());
-						String level = levelTf.getText();
-						dao.m_insertEmployee(name, id, pw, level);
+					if(eDialog.isVisible()) {
+						if(userLevel.equals("사장")) {
+							String name = nameTf.getText();
+							String id = idTf.getText();
+							String pw = new String(pwTf.getPassword());
+							String level = levelTf.getText();
+							dao.m_insertEmployee(name, id, pw, level);
+						}else {
+							String name = nameTf.getText();
+							String id = idTf.getText();
+							String pw = new String(pwTf.getPassword());
+							dao.insertEmployee(name, id, pw);
+						}
 					}else {
-						String name = nameTf.getText();
-						String id = idTf.getText();
-						String pw = new String(pwTf.getPassword());
-						dao.insertEmployee(name, id, pw);
+						if(userLevel.equals("사장")) {
+							String name = nameTf.getText();
+							String id = idTf.getText();
+							String pw = new String(pwTf.getPassword());
+							String level = levelTf.getText();
+							dao.m_updateEmployee(name,pw,level,id);
+						}else {
+							String name = nameTf.getText();
+							String id = idTf.getText();
+							String pw = new String(pwTf.getPassword());
+							dao.updateEmployee(name,pw,id);
+						}
 					}
 				}
 			});

@@ -20,12 +20,6 @@ public class DAO {
 		url = "jdbc:oracle:thin:@192.168.0.27:1521:topcredu";
 		
 		
-//		String uid = "hr";
-//		String pw = "1234";
-//		
-//		url = "jdbc:oracle:thin:@localhost:1521:orcl";
-		
-		
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			conn = DriverManager.getConnection(url,uid,pw);
@@ -226,12 +220,11 @@ public class DAO {
 	
 	
 	
-	String updateEmployee(String name,int price,int count,String code) {
-		String sql = "update pos_goods set gname = '"
-					+name+"', gPrice ='"
-					+price+"', gcount ='"
-					+count+"' where gcode ='"
-					+code+"'";
+	String updateEmployee(String name,String pw,String id) {
+		String sql = "update pos_goods set e_name = '"
+					+name+"', e_pw ='"
+					+pw+"' where id ='"
+					+id+"'";
 		try {
 			stmt.executeUpdate(sql);
 			return "수정되었습니다.";
@@ -241,7 +234,20 @@ public class DAO {
 		}
 	}
 	
-	
+	String m_updateEmployee(String name,String pw,String level,String id) {
+		String sql = "update pos_goods set e_name = '"
+				+name+"', e_pw ='"
+				+pw+"',e_level ='"
+				+level+"' where id ='"
+				+id+"'";
+		try {
+			stmt.executeUpdate(sql);
+			return level+" "+name+"으로 수정 되었습니다.";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
 	
 	
 	void closeAll() {
