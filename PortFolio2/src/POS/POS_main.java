@@ -40,6 +40,7 @@ public class POS_main extends JFrame {
 
 	loginDialog login = new loginDialog(this, "로그인");
 	POS_employeePanel ePanel;
+	POS_calculator calculator;
 	
 	public POS_main() {
 
@@ -88,6 +89,7 @@ public class POS_main extends JFrame {
 
 	JTabbedPane pos_goods() {
 		JTabbedPane pane = new JTabbedPane(JTabbedPane.NORTH);
+		pane.addTab("계산", calculator);
 		pane.addTab("상품관리", new POS_goodsPanel(dao));
 		
 		return pane;
