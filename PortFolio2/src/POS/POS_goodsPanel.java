@@ -159,7 +159,11 @@ class POS_goodsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Yes 버튼을 눌렀을때
-				if (JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "삭제",
+				if(gCode.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "목록에서 삭제할 상품을 클릭해주세요.", "알림", JOptionPane.INFORMATION_MESSAGE);
+					dao.selectGoods(model);
+				}
+				else if (JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "삭제",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					try {
 						String code = gCode.getText();
