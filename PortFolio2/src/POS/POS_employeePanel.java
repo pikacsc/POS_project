@@ -85,6 +85,12 @@ class POS_employeePanel extends JPanel {
 				System.out.println(selectedId);
 			
 			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				selectedId = "";
+				selectedLevel = "";
+			}
 		});
 		
 		
@@ -105,6 +111,10 @@ class POS_employeePanel extends JPanel {
 						eDialog.setVisible(true);
 				}
 			});
+			
+			
+			//점장으로 삭제버튼 공백테이블에서 눌렀을때 나오는 nullpointerException
+			//찾는중...
 			deleteBtn.addActionListener(new ActionListener() {
 				
 				@Override
@@ -154,7 +164,12 @@ class POS_employeePanel extends JPanel {
 	}
 	
 	void deleteProcess() {
-		if (JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "삭제",
+		System.out.println("삭제과정"+selectedId);
+		if(selectedId==null) {
+			JOptionPane.showMessageDialog(null, "목록에서 삭제할 직원을 클릭해주세요.", "알림", JOptionPane.INFORMATION_MESSAGE);
+			dao.selectEmployee(eModel);
+		}
+		else if (JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "삭제",
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			try {
 				String result = dao.deleteEmployee(selectedId);
@@ -319,6 +334,9 @@ class POS_employeePanel extends JPanel {
 							String result = dao.m_insertEmployee(name, id, pw, level);
 							if (result.equals("직원등록 되었습니다.")) {
 								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								resetProcess();
+								eDialog.setVisible(false);
+								
 								dao.selectEmployee(eModel);
 							} else {
 								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
@@ -331,6 +349,9 @@ class POS_employeePanel extends JPanel {
 							String result = dao.insertEmployee(name, id, pw);
 							if (result.equals("직원등록 되었습니다.")) {
 								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								resetProcess();
+								eDialog.setVisible(false);
+								
 								dao.selectEmployee(eModel);
 							} else {
 								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
@@ -347,6 +368,8 @@ class POS_employeePanel extends JPanel {
 							String result = dao.m_updateEmployee(name,pw,level,id);
 							if (result.equals("수정되었습니다.")) {
 								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								resetProcess();
+								eDialog2.setVisible(false);
 								dao.selectEmployee(eModel);
 							} else {
 								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
@@ -359,7 +382,10 @@ class POS_employeePanel extends JPanel {
 							String result = dao.updateEmployee(name,pw,id);
 							if (result.equals("수정되었습니다.")) {
 								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
+								resetProcess();
+								eDialog2.setVisible(false);
 								dao.selectEmployee(eModel);
+								
 							} else {
 								JOptionPane.showMessageDialog(null, "입력실패" + result, "Error",
 										JOptionPane.ERROR_MESSAGE);
@@ -373,12 +399,7 @@ class POS_employeePanel extends JPanel {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					nameTf.setText("");
-					idTf.setText("");
-					pwTf.setText("");
-					if(userLevel.equals("사장")) {
-						levelTf.setText("");
-					}
+					resetProcess();
 				}
 			});
 			
@@ -399,6 +420,17 @@ class POS_employeePanel extends JPanel {
 			
 		
 		}
+		void resetProcess() {
+			nameTf.setText("");
+			if(eDialog.isVisible()) {
+				idTf.setText("");
+			}
+			pwTf.setText("");
+			if(userLevel.equals("사장")) {
+				levelTf.setText("");
+			}
+		}
+		
 		
 		
 		void emptyTFCheck(String userLevel) {
