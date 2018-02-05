@@ -82,7 +82,7 @@ public class POS_main extends JFrame {
 				dao.closeAll();
 			}
 		});
-		setSize(800, 500);
+		setSize(1200, 800);
 		setVisible(true);
 		login.setVisible(true);
 		ePanel = new POS_employeePanel(userid,userLevel,dao);
