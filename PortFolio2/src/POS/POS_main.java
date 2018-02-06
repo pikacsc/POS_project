@@ -1,7 +1,9 @@
 package POS;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -19,15 +21,22 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+
+
 
 public class POS_main extends JFrame {
 	DAO dao;
-	DTO dto;
 	String userLevel;
 	String userid;
-	
+	String userName;
+	int safe;
+
 	String selectedLevel;
 	String selectedId;
 	
@@ -39,8 +48,9 @@ public class POS_main extends JFrame {
 
 
 	loginDialog login = new loginDialog(this, "로그인");
+	logDialog log = new logDialog();
 	POS_employeePanel ePanel;
-
+	POS_calculator cPanel;
 	
 	public POS_main() {
 
@@ -56,20 +66,39 @@ public class POS_main extends JFrame {
 		JMenuBar bar = new JMenuBar();
 		JMenu systemMenu = new JMenu("시스템");
 		bar.add(systemMenu);
+		JMenuItem logMenu = new JMenuItem("기록보기");
 		JMenuItem logoutMenu = new JMenuItem("로그아웃");
 		systemMenu.add(logoutMenu);
+		systemMenu.add(logMenu);
+		
 		setJMenuBar(bar);
+		
+		logMenu.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				log.setVisible(true);
+			}
+		});
+		
 		
 		logoutMenu.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String state = "퇴근";
+				int safe = cPanel.getSafe();
+				dao.checkInOut(userName, userLevel, state, safe);
 				pane.remove(ePanel);
+				pane.remove(cPanel);
 				login.setVisible(true);
 				ePanel = new POS_employeePanel(userid,userLevel,dao);
+				cPanel = new POS_calculator(dao,userName,userLevel);
+				
 				ePanel.selectedId = "";
 				ePanel.selectedLevel = "";
 				pane.addTab("직원관리", ePanel);
+				pane.addTab("계산", cPanel);
 				
 			}
 		});
@@ -86,20 +115,72 @@ public class POS_main extends JFrame {
 		setVisible(true);
 		login.setVisible(true);
 		ePanel = new POS_employeePanel(userid,userLevel,dao);
+		cPanel = new POS_calculator(dao,userName,userLevel);
+		
 		pane.addTab("직원관리",ePanel );
+		pane.addTab("계산", cPanel);
 		
 	}
 
 	JTabbedPane pos_goods() {
 		JTabbedPane pane = new JTabbedPane(JTabbedPane.NORTH);
-		pane.addTab("계산", new POS_calculator(dao));
 		pane.addTab("상품관리", new POS_goodsPanel(dao));
 		
 		return pane;
 	}
 
 
-	
+	class logDialog extends JDialog{
+		String userLevel;
+		String userid;
+		String userName;
+		
+		DefaultTableModel logModel;
+		JTable eTable;
+		
+		public logDialog() {
+			System.out.println(dao==null);
+			JPanel center = new JPanel();
+			JPanel south = new JPanel();
+			center.setLayout(new GridLayout(1,1));
+			south.setLayout(new FlowLayout());
+			setTitle("시스템 기록");
+			setLayout(new BorderLayout());
+			String colName[] = {"시간","이름","직급","상태","품명","바코드","갯수","결제액","결제방식","금고"};
+			logModel = new DefaultTableModel(colName, 0) {
+				public boolean isCellEditable(int row,int column) {
+					return false;
+				}
+			};
+			eTable = new JTable(logModel);
+			eTable.setPreferredScrollableViewportSize(new Dimension(500, 300));
+			center.add(new JScrollPane(eTable));
+			
+			JButton listBtn = new JButton("보기");
+			listBtn.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dao.selectlog(logModel);
+				}
+			});
+			JButton confirm = new JButton("확인");
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					setVisible(false);
+				}
+			});
+			add(center,BorderLayout.CENTER);
+			south.add(listBtn);
+			south.add(confirm);
+			add(south,BorderLayout.SOUTH);
+			setSize(900,500);
+		}
+		
+		
+	}
 	
 	
 
@@ -192,7 +273,13 @@ public class POS_main extends JFrame {
 				userid = id.getText();
 				JOptionPane.showMessageDialog(null, result, "로그인승인", JOptionPane.INFORMATION_MESSAGE);
 				userLevel = result.substring(7, 9);
+				userName = result.substring(10,13);
+				String state = JOptionPane.showInputDialog(null, "'출근'\n 또는 로그인한 목적을 입력하시오 : ");
+				String money = JOptionPane.showInputDialog(null, "현재 금고 액수를 입력하시오: ");
+				int safe = Integer.parseInt(money);
 				setVisible(false);
+				cPanel.setSafe(safe);
+				dao.checkInOut(userName, userLevel, state, safe);
 			} else {
 				JOptionPane.showMessageDialog(null, result, "로그인 실패", JOptionPane.INFORMATION_MESSAGE);
 				return;

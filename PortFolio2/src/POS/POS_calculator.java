@@ -25,8 +25,13 @@ public class POS_calculator extends JPanel{
 	int row;
 	int index;
 	int finalPrice;
-	JLabel userLevel;
-	JLabel userName;
+	int safe;
+	String userLevel;
+	
+
+	String userName;
+	JLabel userLevelLabel;
+	JLabel userNameLabel;
 	DefaultTableModel cModel;
 	JTable cTable;
 	
@@ -53,8 +58,11 @@ public class POS_calculator extends JPanel{
 	GridLayout southGrid;
 	GridLayout northGrid;
 	
-	public POS_calculator(DAO dao) {
-		
+	public POS_calculator(DAO dao,String userName,String userLevel) {
+		this.userName = userName;
+		this.userLevel = userLevel;
+		userNameLabel = new JLabel(userName);
+		userLevelLabel = new JLabel(userLevel);
 		this.dao = dao;
 		setLayout(new BorderLayout());
 		String colName[] = {"NO","바코드","상품명","단가","수량","영수액","비고"};
@@ -78,7 +86,8 @@ public class POS_calculator extends JPanel{
 		prePaidBtn = new JButton("프리페이드");
 
 		
-		
+		northPanel.add(userLevelLabel);
+		northPanel.add(userNameLabel);
 		northPanel.add(searchText);
 		northPanel.add(insertBtn);
 		northPanel.add(resetBtn);
@@ -171,6 +180,16 @@ public class POS_calculator extends JPanel{
 
 	}
 	
+	public int getSafe() {
+		return safe;
+	}
+
+
+	public void setSafe(int safe) {
+		this.safe = safe;
+	}
+
+	
 	
 	class MyDialog extends JDialog{
 		JButton insertCountBtn;
@@ -198,9 +217,9 @@ public class POS_calculator extends JPanel{
 					add(new JLabel("거스름돈 : "+change+"원"));
 				}
 				add(paymentWay);
-				add(new JLabel("결제 되었습니다."));
-				JButton confirmPay = new JButton("결제확인");
-				JButton cancelPay = new JButton("결제취소");
+				add(new JLabel("위와 같이 결제될 예정입니다."));
+				JButton confirmPay = new JButton("결제진행");
+				JButton cancelPay = new JButton("취소");
 				JPanel buttonPanel = new JPanel();
 				
 				confirmPay.addActionListener(new ActionListener() {
@@ -212,12 +231,20 @@ public class POS_calculator extends JPanel{
 						row = cModel.getRowCount(); //현재 계산대에 올려진 상품수
 
 						for(int i = 0;i<row;i++) {
+							//"NO","바코드","상품명","단가","수량","영수액","비고"
 							String code = cModel.getValueAt(i,1)+"";
+							String gname = cModel.getValueAt(i,2)+"";
+							int gprice = Integer.parseInt(cModel.getValueAt(i,3)+"");
+							String payWay = paymentWay.getText();
+							String state = "계산";
 							int originalCount = dao.getGoodsCount(code);
 							int minusCount = Integer.parseInt(cModel.getValueAt(i,4)+"");
 							int finalCount = originalCount - minusCount;
+							safe -= minusCount*gprice;
 							dao.afterPurchase(finalCount, code);
+							dao.payCheck(userName, userLevel, state, gname, code, minusCount, gprice, payWay,safe);
 						}
+						JOptionPane.showMessageDialog(null, "결제완료");
 						System.out.println("DB업데이트됨");
 						cModel.setNumRows(0);
 						

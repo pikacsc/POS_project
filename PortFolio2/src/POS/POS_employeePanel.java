@@ -193,7 +193,7 @@ class POS_employeePanel extends JPanel {
 		
 
 		center.setLayout(new GridLayout(1,1));
-		east.setLayout(new FlowLayout());
+		east.setLayout(new GridLayout(4,1));
 		eTable = new JTable(eModel); 
 			
 		eTable.setPreferredScrollableViewportSize(new Dimension(500, 300));
@@ -210,7 +210,7 @@ class POS_employeePanel extends JPanel {
 		east.add(selectBtn);
 		east.add(updateBtn);
 		add(center, BorderLayout.CENTER);
-		add(east, BorderLayout.SOUTH);
+		add(east, BorderLayout.EAST);
 		setSize(280, 400);
 	}
 	

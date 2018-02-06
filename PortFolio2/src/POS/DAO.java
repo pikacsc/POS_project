@@ -15,10 +15,14 @@ public class DAO {
 	String table;
 	public DAO() {
 		String url = null;
-		String uid = "h8";
-		String pw = "h8";
+//		String uid = "h8";
+//		String pw = "h8";
+//		
+//		url = "jdbc:oracle:thin:@192.168.0.27:1521:topcredu";
+		String uid = "JASON";
+		String pw = "oracle";
 		
-		url = "jdbc:oracle:thin:@192.168.0.27:1521:topcredu";
+		url = "jdbc:oracle:thin:@localhost:1521:xe";
 		
 		
 		try {
@@ -60,6 +64,75 @@ public class DAO {
 			return "없는 아이디 입니다.";
 		}
 	}
+	
+//출석 관리 및 금고관리
+	String checkInOut(String userName,String userLevel,String state,int safe) {
+		String sql = "insert into pos_manage values( default,'"
+				+userName+"','"
+				+userLevel+"','"
+				+state+"','','','','','','"+safe+"')";
+		try {
+			stmt.executeUpdate(sql);
+			return "입력되었습니다.";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	String payCheck(String userName,String userLevel,String state,String name,String code,int count,int price,String paymentWay,int safe) {
+		String sql = "insert into pos_manage values( default,'"
+				+userName+"','"
+				+userLevel+"','"
+				+state+"','"+name+"','"+code+"','"+count+"','"+price+"','"+paymentWay+"','"+safe+"')";
+		System.out.println(sql);
+		try {
+			stmt.executeUpdate(sql);
+			return "로그 기록완료";
+		}catch(Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	DefaultTableModel selectlog(DefaultTableModel model) {
+		
+		String sql = "select * from pos_manage";
+		try {
+			ResultSet rs = stmt.executeQuery(sql);	
+			model.setNumRows(0);
+			while(rs.next()) {
+				String[] row = new String[10];
+				row[0] = rs.getString("checkdate");
+				row[1] = rs.getString("e_name");
+				row[2] = rs.getString("e_level");
+				row[3] = rs.getString("state");
+				row[4] = rs.getString("gname");
+				row[5] = rs.getString("gcode");
+				row[6] = rs.getString("gcount");
+				row[7] = rs.getString("gprice");
+				row[8] = rs.getString("paymentway");
+				row[9] = rs.getString("safe");
+				model.addRow(row);
+			}
+			rs.close();
+			return model;	
+		}
+		catch(NullPointerException e1) {
+			model.setNumRows(0);
+			e1.getMessage();
+			e1.printStackTrace();
+			return model;
+			
+		}catch(SQLException e2) {
+			e2.printStackTrace();
+			e2.getMessage();
+			return model;
+			
+		}
+	}
+	
+	
 	
 //계산 항목
 	String[] scanGoods(int index,String []row,String gcode,int gcount) {

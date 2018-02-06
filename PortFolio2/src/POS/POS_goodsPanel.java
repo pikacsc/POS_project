@@ -200,7 +200,7 @@ class POS_goodsPanel extends JPanel {
 
 		north.setLayout(new FlowLayout());
 		center.setLayout(new GridLayout(1,1));
-		south.setLayout(new FlowLayout());
+		south.setLayout(new GridLayout(4,1));
 		north.add(new JLabel("상품이름:"));
 		north.add(gName);
 		north.add(new JLabel("가격:"));
@@ -224,7 +224,7 @@ class POS_goodsPanel extends JPanel {
 		south.add(deleteBtn);
 		add(north, BorderLayout.NORTH);
 		add(center, BorderLayout.CENTER);
-		add(south, BorderLayout.SOUTH);
+		add(south, BorderLayout.EAST);
 		setSize(280, 400);
 
 	}
