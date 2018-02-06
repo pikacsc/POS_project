@@ -92,7 +92,7 @@ public class POS_main extends JFrame {
 
 	JTabbedPane pos_goods() {
 		JTabbedPane pane = new JTabbedPane(JTabbedPane.NORTH);
-		pane.addTab("계산", new POS_calculator());
+		pane.addTab("계산", new POS_calculator(dao));
 		pane.addTab("상품관리", new POS_goodsPanel(dao));
 		
 		return pane;

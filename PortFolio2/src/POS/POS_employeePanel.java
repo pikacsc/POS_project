@@ -3,6 +3,7 @@ package POS;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -85,12 +86,7 @@ class POS_employeePanel extends JPanel {
 				System.out.println(selectedId);
 			
 			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				selectedId = "";
-				selectedLevel = "";
-			}
+		
 		});
 		
 		
@@ -196,7 +192,7 @@ class POS_employeePanel extends JPanel {
 		east = new JPanel();
 		
 
-		center.setLayout(new FlowLayout());
+		center.setLayout(new GridLayout(1,1));
 		east.setLayout(new FlowLayout());
 		eTable = new JTable(eModel); 
 			
@@ -316,7 +312,7 @@ class POS_employeePanel extends JPanel {
 			
 			add(centerPanel, BorderLayout.CENTER);
 			add(southPanel, BorderLayout.SOUTH);
-			setSize(250, 350);
+			setSize(250, 220);
 		}
 		
 		void listenerSetting() {
@@ -331,7 +327,7 @@ class POS_employeePanel extends JPanel {
 							String id = eDialog.idTf.getText();
 							String pw = new String(eDialog.pwTf.getPassword());
 							String level = eDialog.levelTf.getText();
-							String result = dao.m_insertEmployee(name, id, pw, level);
+							String result = dao.m_insertEmployee(id, pw, name, level);
 							if (result.equals("직원등록 되었습니다.")) {
 								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
 								resetProcess();
@@ -346,7 +342,7 @@ class POS_employeePanel extends JPanel {
 							String name = eDialog.nameTf.getText();
 							String id = eDialog.idTf.getText();
 							String pw = new String(eDialog.pwTf.getPassword());
-							String result = dao.insertEmployee(name, id, pw);
+							String result = dao.insertEmployee(id, pw, name);
 							if (result.equals("직원등록 되었습니다.")) {
 								JOptionPane.showMessageDialog(null, result, "알림", JOptionPane.INFORMATION_MESSAGE);
 								resetProcess();

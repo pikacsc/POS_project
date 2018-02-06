@@ -14,13 +14,7 @@ public class DTO {
 	 private int goodsPrice;
 	 private int goodsCount;
 	 private String goodsCode;
-	 
-	 private String employeeId;
-	 private String employeepw;
-	 private String employeeName;
-	 private String employeeLevel;
-	 private String joinDate;
-	 
+
 	 private int dailySales;
 	 private int weeklySales;
 	 private int monthlySales;

@@ -3,6 +3,7 @@ package POS;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -198,7 +199,7 @@ class POS_goodsPanel extends JPanel {
 		gCode = new JTextField(20);
 
 		north.setLayout(new FlowLayout());
-		center.setLayout(new FlowLayout());
+		center.setLayout(new GridLayout(1,1));
 		south.setLayout(new FlowLayout());
 		north.add(new JLabel("상품이름:"));
 		north.add(gName);

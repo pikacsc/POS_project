@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class DAO {
@@ -58,6 +59,65 @@ public class DAO {
 			e.getMessage();
 			return "없는 아이디 입니다.";
 		}
+	}
+	
+//계산 항목
+	String[] scanGoods(int index,String []row,String gcode,int gcount) {
+		String sql = "select * from pos_goods where gcode ='"+gcode+"'";
+		try {
+			ResultSet rs = stmt.executeQuery(sql);	
+			while(rs.next()) {
+				row[0] = index+"";
+				row[1] = rs.getString("gCode");
+				row[2] = rs.getString("gName");
+				row[3] = rs.getString("gPrice");
+				row[4] = "";
+				row[5] = "";
+				row[6] = "";
+			}
+			rs.close();
+			return row;	
+		}
+		catch(NullPointerException e1) {
+			e1.getMessage();
+			e1.printStackTrace();
+			return row;
+			
+		}catch(SQLException e2) {
+			e2.printStackTrace();
+			e2.getMessage();
+			return row;
+			
+		}
+	}
+	
+	void afterPurchase(int x,String code) {
+		String sql = "update pos_goods set gcount ='"
+				+x+"' where gcode ='"
+				+code+"'";
+		try {
+			stmt.executeUpdate(sql);
+		}catch(Exception e) {
+			e.printStackTrace();
+			e.getMessage();
+		}
+	}
+	
+	int getGoodsCount(String code) {
+		int count;
+		String sql = "select gcount from pos_goods where gcode ='"+code+"'";
+		try {
+			ResultSet rs = stmt.executeQuery(sql);	
+			while(rs.next()) {
+				count = Integer.parseInt(rs.getString("gCount"));
+				return count;	
+			}
+			rs.close();
+		}catch(SQLException e2) {
+			e2.printStackTrace();
+			e2.getMessage();
+		}
+		return 0;
 	}
 	
 	
@@ -145,11 +205,11 @@ public class DAO {
 //직원 항목	
 	
 
-	String insertEmployee(String name,String id,String pw) {
+	String insertEmployee(String id,String pw,String name) {
 		String sql = "insert into pos_employees values('"
-				+name+"','"
 				+id+"','"
-				+pw+"','아르바이트',default)";
+				+pw+"','"
+				+name+"','직원',default)";
 		try {
 			stmt.executeUpdate(sql);
 			return "직원등록 되었습니다.";
@@ -159,11 +219,11 @@ public class DAO {
 		}
 	}
 	
-	String m_insertEmployee(String name,String id,String pw,String level) {
+	String m_insertEmployee(String id,String pw,String name,String level) {
 		String sql = "insert into pos_employees values('"
-				+name+"','"
 				+id+"','"
 				+pw+"','"
+				+name+"','"
 				+level+"',default)";
 		try {
 			stmt.executeUpdate(sql);
@@ -223,8 +283,7 @@ public class DAO {
 	String updateEmployee(String name,String pw,String id) {
 		String sql = "update pos_employees set e_name = '"
 					+name+"', e_pw ='"
-					+pw+"' where e_id ="
-					+id;
+					+pw+"' where e_id = '"+id+"'";
 		try {
 			stmt.executeUpdate(sql);
 			return "수정되었습니다.";
