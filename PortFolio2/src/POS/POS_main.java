@@ -139,7 +139,6 @@ public class POS_main extends JFrame {
 		JTable eTable;
 		
 		public logDialog() {
-			System.out.println(dao==null);
 			JPanel center = new JPanel();
 			JPanel south = new JPanel();
 			center.setLayout(new GridLayout(1,1));
@@ -275,11 +274,18 @@ public class POS_main extends JFrame {
 				userLevel = result.substring(7, 9);
 				userName = result.substring(10,13);
 				String state = JOptionPane.showInputDialog(null, "'출근'\n 또는 로그인한 목적을 입력하시오 : ");
-				String money = JOptionPane.showInputDialog(null, "현재 금고 액수를 입력하시오: ");
-				int safe = Integer.parseInt(money);
-				setVisible(false);
-				cPanel.setSafe(safe);
-				dao.checkInOut(userName, userLevel, state, safe);
+				try {
+					String money = JOptionPane.showInputDialog(null, "현재 금고 액수를 입력하시오: ");				
+					int safe = Integer.parseInt(money);			
+					dao.checkInOut(userName, userLevel, state, safe);			
+					setVisible(false);
+				}catch(Exception e) {
+					JOptionPane.showMessageDialog(null, "입력 실패, 다시 입력하세요", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					e.getMessage();
+					return;
+				}
 			} else {
 				JOptionPane.showMessageDialog(null, result, "로그인 실패", JOptionPane.INFORMATION_MESSAGE);
 				return;

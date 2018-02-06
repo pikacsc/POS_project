@@ -173,6 +173,24 @@ public class POS_calculator extends JPanel{
 		});
 		
 		
+		trafficCardBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MyDialog t = new MyDialog("교통카드결제",0);
+				t.setVisible(true);
+			}
+		});
+		
+		prePaidBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MyDialog p = new MyDialog("프리페이드",0);
+				p.setVisible(true);
+			}
+		});
+		
 		add(centerPanel,BorderLayout.CENTER);
 		add(northPanel,BorderLayout.NORTH);
 		add(southPanel,BorderLayout.SOUTH);
@@ -257,6 +275,8 @@ public class POS_calculator extends JPanel{
 						setVisible(false);
 					}
 				});
+				
+				
 				buttonPanel.setLayout(new FlowLayout());
 				buttonPanel.add(confirmPay);
 				buttonPanel.add(cancelPay);
@@ -265,9 +285,12 @@ public class POS_calculator extends JPanel{
 			}else if(title.equals("금고보관")) {
 				setSize(350,350);
 			}else if(title.equals("교통카드결제")) {
-				setSize(350,350);
+				String a = JOptionPane.showInputDialog(null, "충전할 금액 : ");
+				int gprice = Integer.parseInt(a);
+				dao.trafficCardCheck(userName, userLevel, gprice, safe);
+				JOptionPane.showMessageDialog(null, "충전이 완료 되었습니다.");		
 			}else {
-				setSize(350,350);
+				JOptionPane.showMessageDialog(null, "이 기능은 추후에 업데이트될 예정 입니다.");				
 			}
 		}
 		

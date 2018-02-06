@@ -95,6 +95,22 @@ public class DAO {
 		}
 	}
 	
+	String trafficCardCheck(String userName,String userLevel,int price,int safe) {
+		String sql = "insert into pos_manage values( default,'"
+				+userName+"','"
+				+userLevel+"','교통카드충전','교통카드','TMONEY333','1','"+price+"','현금','"+safe+"')";
+		System.out.println(sql);
+		try {
+			stmt.executeUpdate(sql);
+			return "로그 기록완료";
+		}catch(Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	
+	
 	DefaultTableModel selectlog(DefaultTableModel model) {
 		
 		String sql = "select * from pos_manage";
